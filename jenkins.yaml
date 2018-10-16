@@ -1,0 +1,56 @@
+plugins:
+  sites:
+  - id: "default"
+    url: "https://updates.jenkins.io/update-center.json"
+jenkins:
+  agentProtocols:
+  - "JNLP4-connect"
+  - "Ping"
+  clouds:
+  - kubernetes:
+      containerCapStr: "10"
+      jenkinsUrl: "http://<jenkins-pod-ip>:8080"
+      maxRequestsPerHostStr: "32"
+      name: "kubernetes"
+      serverUrl: "https://<cluster-ip>:8443"
+      templates:
+      - containers:
+        - args: "cat"
+          command: "/bin/sh -c"
+          image: "jenkinsci/jnlp-slave"
+          livenessProbe:
+            failureThreshold: 0
+            initialDelaySeconds: 0
+            periodSeconds: 0
+            successThreshold: 0
+            timeoutSeconds: 0
+          name: "jenkins-slave"
+          ttyEnabled: true
+        label: "jenkins-slave"
+        name: "jenkins-slave"
+        nodeUsageMode: "NORMAL"
+        workspaceVolume:
+          emptyDirWorkspaceVolume:
+            memory: false
+  disableRememberMe: false
+  mode: NORMAL
+  numExecutors: 2
+  primaryView:
+    all:
+      name: "all"
+  quietPeriod: 5
+  scmCheckoutRetryCount: 0
+  slaveAgentPort: 50000
+  views:
+  - all:
+      name: "all"
+unclassified:
+  location:
+    url: "http://192.168.99.100:30981/"
+tool:
+  jdk:
+    defaultProperties:
+    - installSource:
+        installers:
+        - jdkInstaller:
+            acceptLicense: false
